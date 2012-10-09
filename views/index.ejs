@@ -9,7 +9,13 @@
       socket.on("message", function(response){
         console.log(response);
       });
-      socket.emit('message', { my: 'data' });
+      socket.emit('message', { 
+        action: "auth",
+        params: {
+          login:    "macbury",
+          passowrd: "test1234"
+        }
+      });
     </script>
   </head>
   <body>
