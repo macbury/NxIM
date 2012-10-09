@@ -9,6 +9,7 @@
     "express": "3.0.0rc4",
     "ejs": "*",
     "socket.io": "0.9.10",
-    "less-middleware": "*"
+    "less-middleware": "*",
+    "mongoose": "3.2.2"
   }
 }
