@@ -6,8 +6,6 @@ var AppView = Backbone.View.extend({
 
   render: function() {
     $(this.el).empty();
-    $('body').animate({
-      'backgrund': "#F9F9F9"
-    });
+
   }
 });

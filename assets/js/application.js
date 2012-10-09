@@ -1,6 +1,6 @@
 //= require_tree ./lib
 //= require_tree ./app
-//= require boot
+//= require router
 
 $(document).ready(function(){
   console.log("Hello!");

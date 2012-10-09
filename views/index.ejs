@@ -6,12 +6,21 @@
   </head>
   <body>
     <noscript>Your browser don't support javascript!</noscript>
-    <div id="app-content">
+    <div id="app-content" class="container-fluid">
       <p id="loading-paragraph">
         Loading...
       </p>
     </div>
     
+    <script type="template/ecjs" id='loginViewTemplate'>
+      .
+      <form class="form-inline well">
+        <input type="text" class="input-small" placeholder="Login">
+        <input type="password" class="input-small" placeholder="Password">
+        <button type="submit" class="btn">Log in</button>
+      </form>
+    </script>
+
     <script src="/socket.io/socket.io.js"></script>
     <%- js('application') %>
   </body>
