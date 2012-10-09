@@ -16,8 +16,11 @@ ConnectionManager.prototype = {
       connection = new SocketTransport(context, socket);
       connection._disconnectCallback = function(transportConnection) {
         var index = context.connections.indexOf(transportConnection);
-        if (index > 0)
+        if (index > 0) {
           delete context.connections[index];
+          context.connections.splice(index, 1);
+        }
+          
       }
       context.connections.push(connection);
     });
