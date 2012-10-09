@@ -1,7 +1,7 @@
-var socketIO = require('socket.io');
-
+var socketIO        = require('socket.io');
+var logger          = require('nlogger').logger(module);
 function boot(httpServer) {
-  console.log("Starting socket.io server now");
+  logger.info("Starting socket.io server now");
   io = socketIO.listen(httpServer);
   io.configure('development', function(){
     io.set('log level', 1);

@@ -24,9 +24,9 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.enable('trust proxy');
-  app.use(require('connect-assets')(
+  app.use(require('connect-assets')({
     src: "./assets/"
-  ));
+  }));
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
   app.use(express.static(path.join(__dirname, 'public')));
 });
@@ -39,11 +39,10 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 
 httpServer = http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+  logger.info("Express server listening on port " + app.get('port'));
 });
 
 connectionManager = new ConnectionManager();
-io = socket.boot(httpServer)
-
+io                = socket.boot(httpServer)
 connectionManager.bindSocketIO(io);
 
