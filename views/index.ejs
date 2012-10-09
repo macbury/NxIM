@@ -3,7 +3,17 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <noscript>Your browser don't support javascript!</noscript>
+    <p id="loading-paragraph">
+      Loading...
+    </p>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/underscore.js"></script>
+    <script src="/javascripts/backbone.js"></script>
+    <script src="/javascripts/jquery.js"></script>
+    <%- js('application') %>
     <script type="text/javascript">
       var socket = io.connect('http://localhost');
       socket.on("message", function(response){
@@ -17,9 +27,5 @@
         }
       });
     </script>
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
   </body>
 </html>
