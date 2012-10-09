@@ -1,3 +1,4 @@
+var logger          = require('nlogger').logger(module);
 // This class will be proxy to connection object(for later support other types of connection like tcp or other)
 
 // context is connection_manager
@@ -5,6 +6,7 @@
 function SocketTransport(context, io) {
   this.socket  = io;
   this.context = context;
+  this.user    = null;
   _this = this;
   this.socket.on('message', function (data) {
     _this.onMessage(data);
@@ -14,15 +16,14 @@ function SocketTransport(context, io) {
     _this.onDisconnect();
   });
 
-  console.log("New connection.");
+  logger.info("New connection.");
 }
 
 SocketTransport.prototype = {
   _disconnectCallback: null,
 
   onMessage: function(data) {
-    console.log(data);
-    this.sendJSON(data);
+    this.context.onMessage(this, data);
   },
 
   sendJSON: function(data) {
@@ -30,7 +31,7 @@ SocketTransport.prototype = {
   },
 
   onDisconnect: function() {
-    console.log("Disconnectiong.");
+    logger.info("Disconnectiong.");
     this._disconnectCallback(this);
   }
 }
