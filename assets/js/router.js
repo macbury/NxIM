@@ -1,9 +1,9 @@
 var Workspace = Backbone.Router.extend({
 
   routes: {
-    "login":                "login",    // #help
-    "login/process":        "loginProcess",  // #search/kiwis
-    "search/:query/p:page": "search"   // #search/kiwis/p7
+    "login":                "login", 
+    "login/process":        "loginProcess", 
+    "disconnect":           "disconnect"
   },
 
   initialize: function() {
@@ -13,6 +13,10 @@ var Workspace = Backbone.Router.extend({
   login: function() {
     $("#app-content").html(this.loginView.loginWindow().el);
   }, 
+
+  disconnect: function() {
+    $("#app-content").html("Lost connection...");
+  },
 
   loginProcess: function() {
     $("#app-content").html(this.loginView.loginProcessWindow().el);
