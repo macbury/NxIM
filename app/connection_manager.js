@@ -1,12 +1,35 @@
 var SocketTransport = require("./socket_transport").klass;
 var UserModule      = require("./user")
 var logger          = require('nlogger').logger(module);
+var errors          = require("./error_code");
+var authentication  = require("./commands/authentication");
+
 function ConnectionManager() {
   logger.info("Creating connection manager");
+  this.commands = {}
+
+  var commandsTemp = [
+    require("./commands/authentication").commands
+  ];
+
+  for (var i = 0; i < commandsTemp.length; i++) {;
+    commandHash = commandsTemp[i];
+
+    for (var command in commandHash) { 
+      if (this.commands[command]) {
+        throw("There is alredy action named: "+command);
+      } else {
+        this.commands[command] = commandHash[command];
+        logger.info("Registering command: "+command);
+      }
+    }
+  }
+
 }
 
 ConnectionManager.prototype = {
-  socketIO:    null,
+  socketIO: null,
+  commands: {},
   users: [], // users with binded connections
   pending_connections: [], // connections waiting to be assign to user(unauthorized)
 
@@ -33,7 +56,23 @@ ConnectionManager.prototype = {
   },
 
   onMessage: function(transport, data) {
-    logger.debug(data);
+    logger.debug("Message recived: ",data);
+
+    if (data["action"] && data["payload"]) {
+      command = this.commands[data["action"]];
+
+      if (command) {
+        logger.debug("Running command: "+data["action"]);
+        command.call(this, transport, data["payload"]);
+      } else {  
+        transport.sendError(errors.INVALID_ACTION, "Undefined action");  
+        logger.error("action is undefined!"); 
+      }
+    } else {
+      transport.sendError(errors.INVALID_MESSAGE, "Invalid message!");  
+      logger.error("message is invalid!");    
+    }
+
     transport.sendJSON(data);
   }, 
 

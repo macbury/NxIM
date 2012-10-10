@@ -5,7 +5,7 @@
 $(document).ready(function(){
   console.log("Hello!");
 
-  var socket = io.connect('http://localhost');
+  window.socket = io.connect('http://localhost');
   socket.on("message", function(response){
     console.log(response);
   });
@@ -15,7 +15,7 @@ $(document).ready(function(){
   });
   
   socket.emit('message', { 
-    action: "auth",
+    action: "authenticate",
     payload: {
       login:    "macbury",
       passowrd: "test1234"

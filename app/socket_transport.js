@@ -18,9 +18,9 @@ function SocketTransport(context, io) {
   });
 
   logger.info("New connection, timeout in: "+ PendingConnectionTimeout / 1000);
-  setTimeout(function(){
+  /*setTimeout(function(){
     io.disconnect();
-  }, PendingConnectionTimeout);
+  }, PendingConnectionTimeout);*/
 }
 
 SocketTransport.prototype = {
@@ -32,6 +32,14 @@ SocketTransport.prototype = {
 
   sendJSON: function(data) {
     this.socket.emit("message", data);
+  },
+
+  sendAction: function(action,payload) {
+    this.socket.emit("message", { action: action, payload: payload });
+  },
+
+  sendError: function(code, description) {
+    this.sendJSON({ error: description, code: code }); 
   },
 
   onDisconnect: function() {
