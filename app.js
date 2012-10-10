@@ -11,6 +11,7 @@ var express  = require('express')
   , socket   = require("./app/socketio_boot")
   , ConnectionManager = require("./app/connection_manager").klass;
 var logger   = require('nlogger').logger(module);
+var CONFIG   = require('config').development;
 
 var app = express();
 
@@ -43,7 +44,7 @@ httpServer = http.createServer(app).listen(app.get('port'), function(){
   logger.info("Express server listening on port " + app.get('port'));
 });
 
-connectionManager = new ConnectionManager();
+connectionManager = new ConnectionManager(CONFIG);
 io                = socket.boot(httpServer)
 connectionManager.bindSocketIO(io);
 

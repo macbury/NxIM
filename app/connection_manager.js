@@ -4,12 +4,12 @@ var logger          = require('nlogger').logger(module);
 var errors          = require("./error_code");
 var authentication  = require("./commands/authentication");
 var crypto          = require('crypto');
-var DatabseHelper   = require("./mongo_configuration");
+var DatabseHelper   = require("./mongo_configuration").DatabaseHelper;
 
-function ConnectionManager() {
+function ConnectionManager(config) {
   logger.info("Creating connection manager");
   this.commands = {}
-  this.dbHelper = new DatabseHelper({ url: "localhost" });
+  this.dbHelper = new DatabseHelper(config.db);
   
   var commandsTemp = [
     require("./commands/authentication").commands
@@ -42,10 +42,6 @@ ConnectionManager.prototype = {
     context = this;
     this.socketIO.sockets.on('connection', function (socket) {
       connection = new SocketTransport(context, socket);
-      connection._disconnectCallback = function(transportConnection) {
-        context.onDisconnect(transportConnection);
-      }
-
       context.onConnection(connection);
     });
   },
@@ -55,11 +51,11 @@ ConnectionManager.prototype = {
     //user = new UserModule.User();
     //user.pushTransport(socketTransportConnection);
     //this.users.push(user);
-    this = _this
+    _this = this;
+    this.pending_connections.push(socketTransportConnection);
     crypto.randomBytes(128, function(ex, buf) {
       socketTransportConnection.token = buf.toString('hex');
       socketTransportConnection.sendAction("session.start", { token: _this.token });
-      _this.pending_connections.push(socketTransportConnection);
     });
   },
 
@@ -85,6 +81,7 @@ ConnectionManager.prototype = {
   }, 
 
   onDisconnect: function(transportConnection) {
+    logger.debug("Pending connections: "+this.pending_connections.length + " logged in users " + this.users.length);
     if (transportConnection.isAuthorized()) {
       var index = this.users.indexOf(transportConnection.user);
       if (index >= 0) {

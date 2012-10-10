@@ -46,8 +46,8 @@ SocketTransport.prototype = {
   },
 
   onDisconnect: function() {
-    logger.info("Disconnectiong.");
-    this._disconnectCallback(this);
+    logger.debug("Disconnecting transport", this);
+    this.context.onDisconnect(this);
   },
 
   isAuthorized: function() {
