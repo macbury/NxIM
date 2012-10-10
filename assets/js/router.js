@@ -7,6 +7,8 @@ var Workspace = Backbone.Router.extend({
   },
 
   initialize: function() {
+    this.client    = new Client();
+    this.client.connect("http://localhost/");
     this.loginView = new LoginView();
   },
 

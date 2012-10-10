@@ -1,23 +1,8 @@
 var Client = function(host) {
   this.connected = false;
-  socket.on("message", function(response){
-    console.log(response);
-  });
-
-  socket.on("disconnect", function(response){
-    Router.navigate("/disconnect", { trigger: true });
-  });
-  
-  socket.emit('message', { 
-    action: "authenticate",
-    payload: {
-      login:    "macbury",
-      passowrd: "test1234"
-    }
-  });
 }
 
-_.extend(Client.prototype, Events, {
+_.extend(Client.prototype, Backbone.Events, {
 
   connect: function(host) {
     this.connected = true;
@@ -44,6 +29,8 @@ _.extend(Client.prototype, Events, {
   },
 
   login: function(login, password) {
+
+    var hash = CryptoJS.SHA512("Message");
     this.sendAction("authenticate", {
       login:    "macbury",
       passowrd: "test1234"
