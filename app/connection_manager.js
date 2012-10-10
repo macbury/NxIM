@@ -80,13 +80,13 @@ ConnectionManager.prototype = {
     if (transportConnection.haveUser()) {
       var index = this.users.indexOf(transportConnection.user);
       if (index >= 0) {
-        this.users.slice(index,1);
+        this.users.splice(index,1);
         logger.debug("Removed user at index "+ index + " there is still users: " + this.users.length);
       }
     } else {
       var index = this.pending_connections.indexOf(transportConnection);
       if (index >= 0) {
-        this.pending_connections.slice(index,1);
+        this.pending_connections.splice(index,1);
         logger.debug("Removed pending connection at index "+ index + " there is still " + this.pending_connections.length);
       }
     }
