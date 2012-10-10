@@ -3,11 +3,14 @@ var UserModule      = require("./user")
 var logger          = require('nlogger').logger(module);
 var errors          = require("./error_code");
 var authentication  = require("./commands/authentication");
+var crypto          = require('crypto');
+var DatabseHelper   = require("./mongo_configuration");
 
 function ConnectionManager() {
   logger.info("Creating connection manager");
   this.commands = {}
-
+  this.dbHelper = new DatabseHelper({ url: "localhost" });
+  
   var commandsTemp = [
     require("./commands/authentication").commands
   ];
@@ -52,7 +55,12 @@ ConnectionManager.prototype = {
     //user = new UserModule.User();
     //user.pushTransport(socketTransportConnection);
     //this.users.push(user);
-    this.pending_connections.push(socketTransportConnection);
+    this = _this
+    crypto.randomBytes(128, function(ex, buf) {
+      socketTransportConnection.token = buf.toString('hex');
+      socketTransportConnection.sendAction("session.start", { token: _this.token });
+      _this.pending_connections.push(socketTransportConnection);
+    });
   },
 
   onMessage: function(transport, data) {
@@ -77,7 +85,7 @@ ConnectionManager.prototype = {
   }, 
 
   onDisconnect: function(transportConnection) {
-    if (transportConnection.haveUser()) {
+    if (transportConnection.isAuthorized()) {
       var index = this.users.indexOf(transportConnection.user);
       if (index >= 0) {
         this.users.splice(index,1);
