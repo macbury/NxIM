@@ -12,13 +12,8 @@
       </p>
     </div>
     
-    <script type="template/ecjs" id='loginViewTemplate'>
-      .
-      <form class="form-inline well">
-        <input type="text" class="input-small" placeholder="Login">
-        <input type="password" class="input-small" placeholder="Password">
-        <button type="submit" class="btn">Log in</button>
-      </form>
+    <script type="text/javascript">
+      var Templates = <%- JSON.stringify(templates) %>;
     </script>
 
     <script src="/socket.io/socket.io.js"></script>
