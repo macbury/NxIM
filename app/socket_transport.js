@@ -11,7 +11,7 @@ function SocketTransport(context, io) {
   this.user    = null;
   this.token   = null;
 
-  _this = this;
+  var _this = this;
   this.socket.on('message', function (data) {
     _this.onMessage(data);
   });

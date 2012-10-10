@@ -11,5 +11,5 @@ exports.index = function(req, res){
     template_hash[key] = fs.readFileSync(base_template_directory+file_name, "UTF-8");
     logger.info("Loaded backbone template: "+ file_name);
   };
-  res.render('index', { title: 'Express', templates: template_hash });
+  res.render('index', { title: 'Express', templates: template_hash, host: req.host });
 };

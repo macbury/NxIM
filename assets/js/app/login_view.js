@@ -7,10 +7,18 @@ var LoginView = Backbone.View.extend({
   },
 
   initialize: function() {
+
   },
 
   onSubmit: function (e) {
     e.preventDefault();
+
+    Router.client.off("action.session.start");
+    Router.client.on("action.session.start", function(payload) {
+      console.log("Recived token");
+      console.log(this);
+    }, this);
+
     Router.navigate("/login/process", { trigger: true });
     return false;
   },

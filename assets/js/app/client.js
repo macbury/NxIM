@@ -1,20 +1,28 @@
 var Client = function(host) {
   this.connected = false;
+  this.token = null;
 }
 
 _.extend(Client.prototype, Backbone.Events, {
 
   connect: function(host) {
     this.connected = true;
-    this.socket = io.connect('http://localhost');
+    this.socket = io.connect(host);
 
-    _this = this;
+    var _this = this;
     this.socket.on("disconnect", function(response){
       _this.onDisconnect();
     });
     this.socket.on("message", function(response){
-      console.log(response);
+      _this.onMessage(response);
     });
+
+    this.on("action.session.start", this.onSession, this);
+  },
+
+  onSession: function(payload) {
+    this.token = payload["token"];
+    console.log("Current token is: "+this.token);
   },
 
   onDisconnect: function() {
@@ -29,11 +37,18 @@ _.extend(Client.prototype, Backbone.Events, {
   },
 
   login: function(login, password) {
-
-    var hash = CryptoJS.SHA512("Message");
-    this.sendAction("authenticate", {
+    var password_hash = CryptoJS.SHA512(password).toString();
+    var hash          = CryptoJS.SHA512(password_hash + this.token).toString();
+    this.sendAction("session.create", {
       login:    "macbury",
-      passowrd: "test1234"
+      passowrd: hash
     });
+  }, 
+
+  onMessage: function(response) {
+    var action_name = response.action;
+    var payload     = response.payload;
+    
+    this.trigger('action.'+action_name, payload);
   }
 })

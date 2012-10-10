@@ -1,7 +1,7 @@
 {
   "development": {
     "db": {
-      "url": "mongodb://localhost:27017/nxim"
+      "url": "mongodb://192.168.0.120:27017/nxim"
     }
   }
 }

@@ -8,7 +8,7 @@ var Workspace = Backbone.Router.extend({
 
   initialize: function() {
     this.client    = new Client();
-    this.client.connect("http://localhost/");
+    this.client.connect(socket_url);
     this.loginView = new LoginView();
   },
 
@@ -30,7 +30,8 @@ var Workspace = Backbone.Router.extend({
 });
 
 $(document).ready(function(){
-  window.Router = new Workspace();
+  var Router = new Workspace();
+  window.Router = Router;
   Backbone.history.start({
     pushState: false
   });

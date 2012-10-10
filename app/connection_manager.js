@@ -51,11 +51,11 @@ ConnectionManager.prototype = {
     //user = new UserModule.User();
     //user.pushTransport(socketTransportConnection);
     //this.users.push(user);
-    _this = this;
+    var _this = this;
     this.pending_connections.push(socketTransportConnection);
     crypto.randomBytes(128, function(ex, buf) {
       socketTransportConnection.token = buf.toString('hex');
-      socketTransportConnection.sendAction("session.start", { token: _this.token });
+      socketTransportConnection.sendAction("session.start", { token: socketTransportConnection.token });
     });
   },
 
