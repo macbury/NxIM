@@ -1,4 +1,5 @@
 var logger          = require('nlogger').logger(module);
+var PendingConnectionTimeout = 60000;
 // This class will be proxy to connection object(for later support other types of connection like tcp or other)
 
 // context is connection_manager
@@ -16,7 +17,10 @@ function SocketTransport(context, io) {
     _this.onDisconnect();
   });
 
-  logger.info("New connection.");
+  logger.info("New connection, timeout in: "+ PendingConnectionTimeout / 1000);
+  setTimeout(function(){
+    io.disconnect();
+  }, PendingConnectionTimeout);
 }
 
 SocketTransport.prototype = {
@@ -33,6 +37,10 @@ SocketTransport.prototype = {
   onDisconnect: function() {
     logger.info("Disconnectiong.");
     this._disconnectCallback(this);
+  },
+
+  haveUser: function() {
+    return (this.user != null);
   }
 }
 

@@ -9,6 +9,11 @@ $(document).ready(function(){
   socket.on("message", function(response){
     console.log(response);
   });
+
+  socket.on("disconnect", function(response){
+    Router.navigate("/disconnect", { trigger: true });
+  });
+  
   socket.emit('message', { 
     action: "auth",
     payload: {

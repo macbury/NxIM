@@ -7,7 +7,8 @@ function ConnectionManager() {
 
 ConnectionManager.prototype = {
   socketIO:    null,
-  users: [],
+  users: [], // users with binded connections
+  pending_connections: [], // connections waiting to be assign to user(unauthorized)
 
   bindSocketIO: function(io) {
     logger.info("Binding socket io");
@@ -24,10 +25,11 @@ ConnectionManager.prototype = {
   },
 
   onConnection: function(socketTransportConnection) {
-    logger.info("Creating guest user for transport");
-    user = new UserModule.User();
-    user.pushTransport(socketTransportConnection);
-    this.users.push(user);
+    logger.info("New connection appered adding it to the pending connections list");
+    //user = new UserModule.User();
+    //user.pushTransport(socketTransportConnection);
+    //this.users.push(user);
+    this.pending_connections.push(socketTransportConnection);
   },
 
   onMessage: function(transport, data) {
@@ -36,11 +38,20 @@ ConnectionManager.prototype = {
   }, 
 
   onDisconnect: function(transportConnection) {
-    var index = this.users.indexOf(transportConnection.user);
-    if (index >= 0) {
-      this.users.slice(index,1);
-      logger.debug("Removed user at index "+ index);
+    if (transportConnection.haveUser()) {
+      var index = this.users.indexOf(transportConnection.user);
+      if (index >= 0) {
+        this.users.slice(index,1);
+        logger.debug("Removed user at index "+ index + " there is still users: " + this.users.length);
+      }
+    } else {
+      var index = this.pending_connections.indexOf(transportConnection);
+      if (index >= 0) {
+        this.pending_connections.slice(index,1);
+        logger.debug("Removed pending connection at index "+ index + " there is still " + this.pending_connections.length);
+      }
     }
+    
   }
 }
 
