@@ -30,6 +30,7 @@ exports.commands = {
       }
 
       var text = ('' + Math.random()).substr(3, 6);
+      transport.session["token"] = text;
       logger.info("Token is:", text);
 
       for (i = 0; i < text.length; i++) {

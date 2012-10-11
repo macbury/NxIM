@@ -10,7 +10,7 @@ function SocketTransport(context, io) {
   this.context = context;
   this.user    = null;
   this.token   = null;
-
+  this.session = {};
   var _this = this;
   this.socket.on('message', function (data) {
     _this.onMessage(data);
