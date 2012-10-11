@@ -1,6 +1,5 @@
 var logger          = require("nlogger").logger(module);
 var ERROR           = require("../error_code");
-var User            = require("../user").User;
 var User            = require("../mongo_configuration").User;
 
 exports.commands = {

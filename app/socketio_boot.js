@@ -4,7 +4,7 @@ function boot(httpServer) {
   logger.info("Starting socket.io server now");
   io = socketIO.listen(httpServer);
   io.configure('development', function(){
-    io.set('log level', 1);
+    io.set('log level', 2);
     io.set("logger", logger);
   });
 

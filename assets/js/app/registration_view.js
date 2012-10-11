@@ -7,7 +7,8 @@ var RegistrationView = Backbone.View.extend({
   },
 
   initialize: function() {
-    
+    Router.client.on("action.account.token", this.setupToken, this);
+    this.show();
   },
 
   onSubmit: function (e) {
@@ -24,13 +25,18 @@ var RegistrationView = Backbone.View.extend({
     return this;
   },
 
-  onSessionInvalid: function(payload) {
-    alert(payload.error);
-    $(this.el).find("form").show();
+  show: function() {
+    this.render();
+    Router.client.sendAction("account.init", {});
+    return this;
+  },
+
+  setupToken: function(payload) {
+    $(this.el).find(".token").attr("src", payload.image);
   },
 
   unload: function() {
-    //Router.client.off("action.session.invalid", this.onSessionInvalid, this);
+    Router.client.off("action.account.token", this.setupToken, this);
     this.remove();
   }
 

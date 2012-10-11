@@ -2,9 +2,9 @@ var SocketTransport = require("./socket_transport").klass;
 var UserModule      = require("./user")
 var logger          = require('nlogger').logger(module);
 var errors          = require("./error_code");
-var authentication  = require("./commands/authentication");
 var crypto          = require('crypto');
 var DatabseHelper   = require("./mongo_configuration").DatabaseHelper;
+
 
 function ConnectionManager(config) {
   logger.info("Creating connection manager");
@@ -12,7 +12,8 @@ function ConnectionManager(config) {
   this.dbHelper = new DatabseHelper(config.db);
   
   var commandsTemp = [
-    require("./commands/authentication").commands
+    require("./commands/authentication").commands,
+    require("./commands/registration").commands
   ];
 
   for (var i = 0; i < commandsTemp.length; i++) {;
