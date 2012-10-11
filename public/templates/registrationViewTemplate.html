@@ -1,8 +1,41 @@
 <div class="row-fluid">
   <div class="span5 offset3">
+    <div class="page-header">
+      <h3>Create new account</h3>
+    </div>
+
     <form class="form-horizontal">
-      <img class="token" />
-      <a href="#/login" class="btn">Back to login</a>
+      <div class="control-group">
+        <label class="control-label">Login:</label>
+        <div class="controls">
+          <input type="text" class="login" placeholder="Login" value="" />
+        </div>
+      </div>
+      
+      <div class="control-group">
+        <label class="control-label">Password:</label>
+        <div class="controls">
+          <input type="password" class="password" placeholder="Password" value="" />
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Password confirmation:</label>
+        <div class="controls">
+          <input type="password" class="password_confirmation" placeholder="Password confirmation" value="" />
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Token:</label>
+        <div class="controls">
+          <img class="token img-polaroid" />
+          <input type="text" class="login" placeholder="Token" value="" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-block btn-primary btn-large">Create account</button>
+      <a href="#/login" class="btn btn-block btn-large">Back to login</a>
     </form>
   </div>
 </div>
