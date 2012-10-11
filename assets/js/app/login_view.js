@@ -7,31 +7,31 @@ var LoginView = Backbone.View.extend({
   },
 
   initialize: function() {
-
+    Router.client.on("action.session.invalid", this.onSessionInvalid, this);
   },
 
   onSubmit: function (e) {
     e.preventDefault();
+    Router.client.login($(this.el).find('input.login').val(), $(this.el).find('input.password').val());
+    $(this.el).find("form").hide();
 
-    Router.client.off("action.session.start");
-    Router.client.on("action.session.start", function(payload) {
-      console.log("Recived token");
-      console.log(this);
-    }, this);
-
-    Router.navigate("/login/process", { trigger: true });
     return false;
   },
 
-  loginWindow: function() {
+  render: function() {
     html = new EJS({text: Templates['loginViewTemplate']}).render({});
     $(this.el).html(html);
     return this;
   },
 
-  loginProcessWindow: function() {
-    html = new EJS({text: Templates['loginProcessTemplate']}).render({});
-    $(this.el).html(html);
-    return this;
+  onSessionInvalid: function(payload) {
+    alert(payload.error);
+    $(this.el).find("form").show();
   },
+
+  unload: function() {
+    Router.client.off("action.session.invalid", this.onSessionInvalid, this);
+    this.remove();
+  }
+
 });

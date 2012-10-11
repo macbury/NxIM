@@ -46,7 +46,7 @@ SocketTransport.prototype = {
   },
 
   onDisconnect: function() {
-    logger.debug("Disconnecting transport", this);
+    logger.debug("Disconnecting transport");
     this.context.onDisconnect(this);
   },
 

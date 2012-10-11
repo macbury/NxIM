@@ -40,15 +40,21 @@ _.extend(Client.prototype, Backbone.Events, {
     var password_hash = CryptoJS.SHA512(password).toString();
     var hash          = CryptoJS.SHA512(password_hash + this.token).toString();
     this.sendAction("session.create", {
-      login:    "macbury",
-      passowrd: hash
+      login:    login,
+      password: hash
     });
   }, 
 
   onMessage: function(response) {
-    var action_name = response.action;
-    var payload     = response.payload;
+    var error       = response.error;
+
+    if (error != null) {
+      alert(error);
+    } else {
+      var action_name = response.action;
+      var payload     = response.payload;
     
-    this.trigger('action.'+action_name, payload);
+      this.trigger('action.'+action_name, payload);
+    }
   }
 })

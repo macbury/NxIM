@@ -1,11 +1,19 @@
 var mongoose = require('mongoose');
 var logger   = require("nlogger").logger(module);
-var UserSchema = mongoose.Schema({ login: String, password: String });
+var crypto   = require('crypto');
 
-UserSchema.statics.authenticate = function (login, hash, cb) {
+var UserSchema = mongoose.Schema({ login: String, hash: String });
+
+UserSchema.statics.authenticate = function (login, hash, session_token, cb) {
   this.findOne({ login: login }, function(err, user) {
-    if(user && user.password == hash) {
-      cb(user);
+    if(user) {
+      var password_hash = crypto.createHash('sha512').update(user.hash+session_token).digest('hex');
+      if (password_hash == hash) {
+        cb(user);
+      } else {
+        cb(false);
+      }
+      
     } else {
       cb(false);
     }
@@ -17,7 +25,7 @@ function DatabaseHelper(config) {
   this.db      = mongoose.createConnection(config.url, {});
 
   logger.info("Appending schema");
-  exports.User = this.db.model('User', UserSchema);
+  this.User = this.db.model('User', UserSchema);
 }
 
 exports.DatabaseHelper = DatabaseHelper;
