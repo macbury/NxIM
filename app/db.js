@@ -8,7 +8,7 @@ function DatabaseHelper(config) {
     host: config.host,
     port: 3306,
     protocol: null,
-    logging: true,
+    logging: logger.info,
     maxConcurrentQueries: 100,
     dialect: 'mysql',
     define: { timestamps: true },
@@ -23,7 +23,7 @@ function DatabaseHelper(config) {
 
 DatabaseHelper.prototype.buildUserModel = function() {
   var User = this.db.define('User', {
-    login: { type: Sequelize.STRING, allowNull: false },
+    login: { type: Sequelize.STRING, allowNull: false, unique: true  },
     hash:  { type: Sequelize.STRING, allowNull: false }
   }, {
     timestamps: true,
@@ -41,7 +41,40 @@ DatabaseHelper.prototype.buildUserModel = function() {
             cb(false);
           }
         });
-      }
+      },
+
+      register: function(payload, token, cb) {
+
+        var password = payload.get('password');
+        var hash     = crypto.createHash('sha512').update(password);
+        User.create({ login: payload.get('login'), hash: hash }).success(function(user){
+
+        });
+      },
+
+      valid: function(payload, token, cb) {
+        var errors = [];
+
+        if (payload.get('login') == null || payload.get('login').length <= 3) {
+          errors.push("Password is to short!");
+        }
+        if (payload.get('password') == null || payload.get('password').length <= 5) {
+          errors.push("Password is to short!");
+        }
+        if (payload.get('password') != payload.get('password_confirmation')) {
+          errors.push("Password confirmation don't match");
+        }
+        if (payload.get('token') != token) {
+          errors.push("Token is invalid!");
+        }
+
+        User.count({ where: ["login = ?", payload.get('login')] }).success(function(count){
+          if (count == 1) {
+            errors.push("Login already taken");
+          }
+          cb(errors);
+        });
+      },
     }
   });
 
