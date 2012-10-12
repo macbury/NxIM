@@ -12,27 +12,26 @@ var Workspace = Backbone.Router.extend({
   },
 
   registerAction: function() {
-    if (this.registrationView) {
-      this.registrationView.unload();
-      this.registrationView = null;
-    }
-
-    this.registrationView = new RegistrationView();
-
-    $("#app-content").html(this.registrationView.render().el);
+    this.setView(new RegistrationView());
   },
 
   login: function() {
-    if (this.loginView) {
-      this.loginView.unload();
-      this.loginView = null;
-    }
-    this.loginView = new LoginView();
-    $("#app-content").html(this.loginView.render().el);
+    this.setView(new LoginView());
   }, 
 
   disconnect: function() {
     $("#app-content").html("Lost connection...");
+  }, 
+
+  currentView: null,
+  setView: function(newView) {
+    if (this.currentView) {
+      this.currentView.unload();
+      this.currentView = null;
+    }
+
+    this.currentView = newView;
+    $("#app-content").html(this.currentView.render().el);
   }
 
 });

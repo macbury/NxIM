@@ -56,9 +56,10 @@ DatabaseHelper.prototype.buildUserModel = function() {
 
       valid: function(payload, token, cb) {
         var errors = [];
-
+        var login = payload.get('login');
         if (payload.get('login') == null || payload.get('login').length <= 3) {
-          errors.push("Password is to short!");
+          errors.push("Login is to short!");
+          login = ' ';
         }
         if (payload.get('password') == null || payload.get('password').length <= 5) {
           errors.push("Password is to short!");
@@ -70,7 +71,7 @@ DatabaseHelper.prototype.buildUserModel = function() {
           errors.push("Token is invalid!");
         }
 
-        User.count({ where: ["login = ?", payload.get('login')] }).success(function(count){
+        User.count({ where: ["login = ?", login] }).success(function(count){
           if (count == 1) {
             errors.push("Login already taken");
           }

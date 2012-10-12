@@ -42,16 +42,16 @@ exports.commands = {
   // creating account, required payload: { login: String, password: String, token: String }
   "account.create": function(transport, payload) {
     var payload = new Payload(payload, { login: String, password: String, password_confirmation: String, token: String });
-    
+
     if (transport.isAuthorized()) {
       logger.info("User already authorized this transport!");
       transport.sendError(ERROR.ALREADY_AUTHORIZED, "You cannot register while logged in!");
     } else {
       if (payload.valid()) {
         var _this = this;
-        this.db.User.valid(payload, this.session["token"], function(errors){
+        this.dbHelper.User.valid(payload, transport.session["token"], function(errors){
           if (errors.length == 0) {
-            _this.db.User.register(payload, _this.session["token"], function(user) {
+            _this.dbHelper.User.register(payload, transport.session["token"], function(user) {
               if (user) {
                 transport.sendAction("account.ready", {});
               } else {
