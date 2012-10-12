@@ -13,7 +13,7 @@ var RegistrationView = Backbone.View.extend({
 
   onSubmit: function (e) {
     e.preventDefault();
-    Router.client.login($(this.el).find('input.login').val(), $(this.el).find('input.password').val());
+    Router.client.register($(this.el).find('input.login').val(), $(this.el).find('input.password').val());
     $(this.el).find("form").hide();
 
     return false;

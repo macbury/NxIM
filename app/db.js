@@ -44,11 +44,13 @@ DatabaseHelper.prototype.buildUserModel = function() {
       },
 
       register: function(payload, token, cb) {
-
         var password = payload.get('password');
         var hash     = crypto.createHash('sha512').update(password);
         User.create({ login: payload.get('login'), hash: hash }).success(function(user){
-
+          cb(user);
+        }).error(function(error){
+          logger.error("Could not save user: ", error);
+          cb(false);
         });
       },
 

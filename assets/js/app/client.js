@@ -45,6 +45,15 @@ _.extend(Client.prototype, Backbone.Events, {
     });
   }, 
 
+  register: function(login, password, password_confirmation, token) {
+    this.sendAction("account.create", {
+      login:    login,
+      password: password,
+      password_confirmation: password_confirmation,
+      token: token
+    });
+  },
+
   onMessage: function(response) {
     var error       = response.error;
 

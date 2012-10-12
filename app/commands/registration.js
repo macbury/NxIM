@@ -42,6 +42,7 @@ exports.commands = {
   // creating account, required payload: { login: String, password: String, token: String }
   "account.create": function(transport, payload) {
     var payload = new Payload(payload, { login: String, password: String, password_confirmation: String, token: String });
+    
     if (transport.isAuthorized()) {
       logger.info("User already authorized this transport!");
       transport.sendError(ERROR.ALREADY_AUTHORIZED, "You cannot register while logged in!");
@@ -52,24 +53,15 @@ exports.commands = {
           if (errors.length == 0) {
             _this.db.User.register(payload, _this.session["token"], function(user) {
               if (user) {
-
+                transport.sendAction("account.ready", {});
               } else {
                 transport.sendError(ERROR.INTERNAL_SEVER_ERROR, "Could not save new user");
               }
             });
           } else {
-            transport.sendAction("account.validation", { code: ERROR.VALIDATION_ERROR, problems: errors })
+            transport.sendAction("account.validation", { code: ERROR.VALIDATION_ERROR, problems: errors });
           }
         });
-        /*var user = new User(payload);
-        user.save(function(err) {
-          if (err) {
-            logger.error("Fatal error, could not save user", err);
-            transport.sendError(ERROR.INTERNAL_SEVER_ERROR, "Could not save user into db!");
-          } else {
-            transport.sendAction("account.ready", {})
-          }
-        });*/
       } else {
         logger.info("Invalid payload for registration!");
         payload.sendValidationError(transport, "account.create");
