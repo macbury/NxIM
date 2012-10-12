@@ -51,7 +51,11 @@ exports.commands = {
         this.db.User.valid(payload, this.session["token"], function(errors){
           if (errors.length == 0) {
             _this.db.User.register(payload, _this.session["token"], function(user) {
+              if (user) {
 
+              } else {
+                transport.sendError(ERROR.INTERNAL_SEVER_ERROR, "Could not save new user");
+              }
             });
           } else {
             transport.sendAction("account.validation", { code: ERROR.VALIDATION_ERROR, problems: errors })
