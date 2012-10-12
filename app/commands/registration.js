@@ -2,6 +2,7 @@ var logger          = require("nlogger").logger(module);
 var ERROR           = require("../error_code");
 var Payload         = require("../payload").Payload;
 var Canvas          = require("canvas");
+var User            = require("../mongo_configuration").User;
 
 var CAPTCHA = {
   Width: 200,
@@ -47,9 +48,18 @@ exports.commands = {
       transport.sendError(ERROR.ALREADY_AUTHORIZED, "You cannot register while logged in!");
     } else {
       if (payload.valid()) {
-
+        var user = new User(payload);
+        user.save(function(err) {
+          if (err) {
+            logger.error("Fatal error, could not save user", err);
+            transport.sendError(ERROR.INTERNAL_SEVER_ERROR, "Could not save user into db!");
+          } else {
+            transport.sendAction("account.ready", {})
+          }
+        });
       } else {
-        
+        logger.info("Invalid payload for registration!");
+        payload.sendValidationError(transport, "account.create");
       }
     }
   }

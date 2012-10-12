@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var logger   = require("nlogger").logger(module);
 var crypto   = require('crypto');
 
-var UserSchema = mongoose.Schema({ login: String, hash: String });
+var UserSchema = mongoose.Schema({ login: String, hash: String }, { strict: true });
 
 UserSchema.statics.authenticate = function (login, hash, session_token, cb) {
   this.findOne({ login: login }, function(err, user) {

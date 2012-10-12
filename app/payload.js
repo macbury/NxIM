@@ -31,8 +31,8 @@ Payload.prototype.valid = function() {
   return valid;
 }
 
-Payload.prototype.sendValidationError = function(transport) {
-  transport.sendError(ERROR.INVALID_PAYLOAD, "The payload is invalid! Valid package is: "+JSON.stringify(this.valid_payload));
+Payload.prototype.sendValidationError = function(transport, method) {
+  transport.sendError(ERROR.INVALID_PAYLOAD, "The payload for "+method+" is invalid! Valid package is: "+JSON.stringify(this.valid_payload));
 };
 
 exports.Payload = Payload;

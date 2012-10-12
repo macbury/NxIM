@@ -19,7 +19,7 @@ exports.commands = {
         });
       } else {
         logger.info("Invalid payload for authentication!");
-        payload.sendValidationError(transport);
+        payload.sendValidationError(transport, "session.create");
       }
     }
   }
