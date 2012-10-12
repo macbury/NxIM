@@ -3,7 +3,7 @@ var UserModule      = require("./user")
 var logger          = require('nlogger').logger(module);
 var errors          = require("./error_code");
 var crypto          = require('crypto');
-var DatabseHelper   = require("./mongo_configuration").DatabaseHelper;
+var DatabseHelper   = require("./db").DatabaseHelper;
 
 
 function ConnectionManager(config) {

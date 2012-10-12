@@ -1,6 +1,5 @@
 var logger          = require("nlogger").logger(module);
 var ERROR           = require("../error_code");
-var User            = require("../mongo_configuration").User;
 var Payload         = require("../payload").Payload;
 
 exports.commands = {
@@ -13,7 +12,7 @@ exports.commands = {
       transport.sendError(ERROR.ALREADY_AUTHORIZED, "You cannot twice login on this same connection!");
     } else {
       if (payload.valid()) {
-        this.dbHelper.User.authenticate(payload['login'], payload['password'], transport.token, function(user){
+        this.dbHelper.User.authenticate(payload.get('login'), payload.get('password'), transport.token, function(user){
           logger.info("Waiting for authentication");
           transport.sendAction("session.invalid", { error: "Invalid password or login", code: ERROR.INVALID_PASSWORD_OR_LOGIN });
         });

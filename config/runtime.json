@@ -1,7 +1,10 @@
 {
   "development": {
     "db": {
-      "url": "mongodb://127.0.0.1:27017/nxim"
+      "name": "nximdev",
+      "host": "localhost",
+      "password": "new_password_here",
+      "user": "root"
     }
   }
 }

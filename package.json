@@ -10,7 +10,7 @@
     "ejs": "*",
     "socket.io": "0.9.10",
     "less-middleware": "*",
-    "mongoose": "3.2.2",
+    "sequelize": "1.6.0-alpha-1",
     "connect-assets": "2.3.3",
     "nlogger": "0.3.1",
     "config": "0.4.17",
