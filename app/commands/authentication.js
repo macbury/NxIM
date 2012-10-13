@@ -13,8 +13,13 @@ exports.commands = {
     } else {
       if (payload.valid()) {
         this.dbHelper.User.authenticate(payload.get('login'), payload.get('password'), transport.token, function(user){
-          logger.info("Waiting for authentication");
-          transport.sendAction("session.invalid", { error: "Invalid password or login", code: ERROR.INVALID_PASSWORD_OR_LOGIN });
+          if (user) {
+            transport.sendAction("session.valid", {});
+          } else {
+            logger.info("Waiting for authentication");
+            transport.sendAction("session.invalid", { error: "Invalid password or login", code: ERROR.INVALID_PASSWORD_OR_LOGIN });
+          }
+          
         });
       } else {
         logger.info("Invalid payload for authentication!");

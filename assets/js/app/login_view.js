@@ -8,6 +8,7 @@ var LoginView = Backbone.View.extend({
 
   initialize: function() {
     Router.client.on("action.session.invalid", this.onSessionInvalid, this);
+    Router.client.on("action.session.valid", this.onSessionValid, this);
   },
 
   onSubmit: function (e) {
@@ -25,12 +26,18 @@ var LoginView = Backbone.View.extend({
   },
 
   onSessionInvalid: function(payload) {
-    alert(payload.error);
+    noty({text: payload.error, type: "warning"});
     $(this.el).find("form").show();
+  },
+
+  onSessionValid: function(payload) {
+    Router.navigate("/stream", { trigger: true });
+    noty({text: "Logged in successful", type: "info"});
   },
 
   unload: function() {
     Router.client.off("action.session.invalid", this.onSessionInvalid, this);
+    Router.client.off("action.session.valid", this.onSessionValid, this);
     this.remove();
   }
 

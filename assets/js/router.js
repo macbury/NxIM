@@ -3,7 +3,8 @@ var Workspace = Backbone.Router.extend({
   routes: {
     "login":                "login",
     "register":             "registerAction",
-    "disconnect":           "disconnect"
+    "disconnect":           "disconnect",
+    "stream":               "stream"
   },
 
   initialize: function() {
@@ -13,6 +14,10 @@ var Workspace = Backbone.Router.extend({
 
   registerAction: function() {
     this.setView(new RegistrationView());
+  },
+
+  stream: function() {
+    this.setView(new StreamView());
   },
 
   login: function() {

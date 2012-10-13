@@ -3,7 +3,7 @@
     "db": {
       "name": "nximdev",
       "host": "localhost",
-      "password": "godishere",
+      "password": "new_password_here",
       "user": "root"
     }
   }

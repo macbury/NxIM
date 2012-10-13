@@ -22,7 +22,6 @@ _.extend(Client.prototype, Backbone.Events, {
 
   onSession: function(payload) {
     this.token = payload["token"];
-    console.log("Current token is: "+this.token);
   },
 
   onDisconnect: function() {

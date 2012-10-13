@@ -8,6 +8,7 @@ var RegistrationView = Backbone.View.extend({
 
   initialize: function() {
     Router.client.on("action.account.token", this.setupToken, this);
+    Router.client.on("action.account.ready", this.accountReady, this);
     Router.client.on("action.account.validation", this.onValidation, this);
     this.show();
   },
@@ -27,6 +28,7 @@ var RegistrationView = Backbone.View.extend({
   render: function() {
     html = new EJS({text: Templates['registrationViewTemplate']}).render({});
     $(this.el).html(html);
+    this.$('.alert').hide();
     return this;
   },
 
@@ -41,13 +43,30 @@ var RegistrationView = Backbone.View.extend({
   },
 
   onValidation: function(payload) {
-    console.log(payload);
-    $(this.el).find("form").show();
+    this.$("form").show();
+
+    if (payload.problems.length == 0) {
+      this.$('.alert').hide();
+    } else {
+      noty({text: 'Could not create account', type: "error"});
+      this.$('.alert').show();
+      this.$('.alert .body').empty();
+      for (var i = payload.problems.length - 1; i >= 0; i--) {
+        var error = payload.problems[i];
+        this.$('.alert .body').append(error + '<br />');
+      };
+    }
+  },
+
+  accountReady: function(payload) {
+    Router.navigate("/login", { trigger: true });
+    noty({text: 'Account created, you can now log in', type: "success"});
   },
 
   unload: function() {
     Router.client.off("action.account.token", this.setupToken, this);
     Router.client.off("action.account.validation", this.onValidation, this);
+    Router.client.off("action.account.ready", this.accountReady, this);
     this.remove();
   }
 

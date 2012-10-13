@@ -31,7 +31,7 @@ DatabaseHelper.prototype.buildUserModel = function() {
       authenticate: function(login, hash, session_token, cb) {
         User.find({ where: {login: login} }).success(function(user){
           if(user) {
-            var password_hash = crypto.createHash('sha512').update(user.hash+session_token).digest('hex');
+            var password_hash = crypto.createHash('sha512').update(user.hash+session_token).digest('hex').toString();
             if (password_hash == hash) {
               cb(user);
             } else {
@@ -45,7 +45,7 @@ DatabaseHelper.prototype.buildUserModel = function() {
 
       register: function(payload, token, cb) {
         var password = payload.get('password');
-        var hash     = crypto.createHash('sha512').update(password);
+        var hash     = crypto.createHash('sha512').update(password).digest('hex').toString();
         User.create({ login: payload.get('login'), hash: hash }).success(function(user){
           cb(user);
         }).error(function(error){
