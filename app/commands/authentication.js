@@ -6,7 +6,7 @@ exports.commands = {
 
   "session.create": function(transport, payload) {
     var payload = new Payload(payload, { login: String, password: String });
-
+    var _this   = this;
     if (transport.isAuthorized()) {
       logger.info("User already authorized this transport!");
       transport.sendError(ERROR.ALREADY_AUTHORIZED, "You cannot twice login on this same connection!");
@@ -14,6 +14,7 @@ exports.commands = {
       if (payload.valid()) {
         this.dbHelper.User.authenticate(payload.get('login'), payload.get('password'), transport.token, function(user){
           if (user) {
+            _this.bindUserToConnection(transport, user);
             transport.sendAction("session.valid", {});
           } else {
             logger.info("Waiting for authentication");

@@ -1,10 +1,9 @@
 var SocketTransport = require("./socket_transport").klass;
-var UserModule      = require("./user")
 var logger          = require('nlogger').logger(module);
 var errors          = require("./error_code");
 var crypto          = require('crypto');
 var DatabseHelper   = require("./db").DatabaseHelper;
-
+var UserPresence    = require("./db").UserPresence;
 
 function ConnectionManager(config) {
   logger.info("Creating connection manager");
@@ -13,7 +12,10 @@ function ConnectionManager(config) {
   
   var commandsTemp = [
     require("./commands/authentication").commands,
-    require("./commands/registration").commands
+    require("./commands/registration").commands,
+    require("./commands/presence").commands,
+    require("./commands/profile").commands,
+    require("./commands/roster").commands,
   ];
 
   for (var i = 0; i < commandsTemp.length; i++) {;
@@ -34,8 +36,26 @@ function ConnectionManager(config) {
 ConnectionManager.prototype = {
   socketIO: null,
   commands: {},
-  users: [], // users with binded connections
+  users: {}, // users with binded connections
   pending_connections: [], // connections waiting to be assign to user(unauthorized)
+
+  broadcastPresence: function(user) {
+    logger.info("Sending presence update to user friends: "+user.id);
+  },
+
+  bindUserToConnection: function(transport, user) {
+    this.removePendingConnection(transport);
+    var connections = this.users[user.id];
+
+    if (connections == null) {
+      logger.info("First connection for user "+user.id);
+      connections = [];
+    }
+    transport.user = user;
+    connections.push(transport);
+    logger.info("User "+user.id + "have connection count "+connections.length);
+    this.users[user.id] = connections;
+  },
 
   bindSocketIO: function(io) {
     logger.info("Binding socket io");
@@ -49,9 +69,7 @@ ConnectionManager.prototype = {
 
   onConnection: function(socketTransportConnection) {
     logger.info("New connection appered adding it to the pending connections list");
-    //user = new UserModule.User();
-    //user.pushTransport(socketTransportConnection);
-    //this.users.push(user);
+
     var _this = this;
     this.pending_connections.push(socketTransportConnection);
     crypto.randomBytes(128, function(ex, buf) {
@@ -84,20 +102,36 @@ ConnectionManager.prototype = {
   onDisconnect: function(transportConnection) {
     logger.debug("Pending connections: "+this.pending_connections.length + " logged in users " + this.users.length);
     if (transportConnection.isAuthorized()) {
-      var index = this.users.indexOf(transportConnection.user);
-      if (index >= 0) {
-        this.users.splice(index,1);
-        logger.debug("Removed user at index "+ index + " there is still users: " + this.users.length);
+      var user        = transportConnection.user;
+      var connections = this.users[user.id];
+      if (connections && connections.length > 0) {
+        var index = connections.indexOf(transportConnection);
+        if (index >= 0) {
+          connections.splice(index,1);
+          logger.debug("Removed connection at index "+ index + " there is still connections for users: " + connections.length);
+        }
+
+        this.users[user.id] = connections;
+      }
+
+      if (connections == null || connections.length == 0) {
+        logger.debug("Removed user with id "+ user.id);
+        transportConnection.user.setPresence(UserPresence.Offline);
+        this.broadcastPresence(user);
+        delete this.users[user.id];
       }
     } else {
-      var index = this.pending_connections.indexOf(transportConnection);
-      if (index >= 0) {
-        this.pending_connections.splice(index,1);
-        logger.debug("Removed pending connection at index "+ index + " there is still " + this.pending_connections.length);
-      }
+      this.removePendingConnection(transportConnection);
     }
-    
-  }
+  }, 
+
+  removePendingConnection: function(transport) {
+    var index = this.pending_connections.indexOf(transport);
+    if (index >= 0) {
+      this.pending_connections.splice(index,1);
+      logger.debug("Removed pending connection at index "+ index + " there is still " + this.pending_connections.length);
+    }
+  },
 }
 
 exports.klass = ConnectionManager;

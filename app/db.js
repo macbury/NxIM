@@ -2,6 +2,13 @@ var logger    = require("nlogger").logger(module);
 var Sequelize = require("sequelize");
 var crypto    = require('crypto');
 
+var Presence  = {
+  Offline: "offline",
+  Online: "online",
+  DnD: "dnd",
+  Away: "away"
+};
+
 function DatabaseHelper(config) {
   logger.info("Connecting to db: ",JSON.stringify(config));
   this.db = new Sequelize(config.name, config.user, config.password, {
@@ -19,14 +26,45 @@ function DatabaseHelper(config) {
   logger.info("Appending schema");
   this.User = this.buildUserModel();
   this.User.sync();
+  logger.info("Appended data!");
 }
 
 DatabaseHelper.prototype.buildUserModel = function() {
   var User = this.db.define('User', {
     login: { type: Sequelize.STRING, allowNull: false, unique: true  },
-    hash:  { type: Sequelize.STRING, allowNull: false }
+    hash:  { type: Sequelize.STRING, allowNull: false },
+    presence: { type: Sequelize.STRING, allowNull: false, defaultValue: Presence.Offline },
   }, {
     timestamps: true,
+
+    instanceMethods: {
+      setPresence: function(new_presence) {
+        if (new_presence == Presence.Online || new_presence == Presence.Offline || new_presence == Presence.Away || new_presence == Presence.DnD) {
+          this.presence = new_presence;
+          this.save();
+          logger.info("Setting presence for user "+this.id + " to "+this.presence);
+        }
+      },
+
+      toCard: function() {
+        return {
+          login: this.login,
+          presence: this.presence
+        };
+      },
+
+      vCard: function(login, cb) {
+        var _this = this;
+        User.find({ where: {login: login} }).success(function(user){
+          if (user && user.id == _this.id) {
+            cb(user.toCard());
+          } else {
+            cb(false);
+          }
+        });
+      }
+    },
+
     classMethods: {
       authenticate: function(login, hash, session_token, cb) {
         User.find({ where: {login: login} }).success(function(user){
@@ -84,4 +122,5 @@ DatabaseHelper.prototype.buildUserModel = function() {
   return User;
 }
 
+exports.UserPresence   = Presence;
 exports.DatabaseHelper = DatabaseHelper;

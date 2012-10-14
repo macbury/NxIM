@@ -44,6 +44,12 @@ _.extend(Client.prototype, Backbone.Events, {
     });
   }, 
 
+  presence: function(presence) {
+    this.sendAction("presence.set", {
+      presence: presence
+    });
+  },
+
   register: function(login, password, password_confirmation, token) {
     this.sendAction("account.create", {
       login:    login,

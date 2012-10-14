@@ -32,6 +32,7 @@ var LoginView = Backbone.View.extend({
 
   onSessionValid: function(payload) {
     Router.navigate("/stream", { trigger: true });
+    Router.client.presence("online");
     noty({text: "Logged in successful", type: "info"});
   },
 
