@@ -10,6 +10,12 @@ var StreamView = Backbone.View.extend({
   render: function() {
     html = new EJS({text: Templates['streamViewTemplate']}).render({});
     $(this.el).html(html);
+
+    var contact = $('.contact').clone();
+    for (var i = 0; i < 100; i++) {
+      $('.contacts-list ul').append(contact.clone());
+    }
+    $(".nano").nanoScroller();
     return this;
   },
 
