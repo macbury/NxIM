@@ -37,6 +37,23 @@ exports.commands = {
     } else {
       transport.sendError(ERROR.UNAUTHORIZED_ERROR, "You must be logged in to add user");
     }
+  },
+
+  "roster.accept": function(transport, payload) {
+    var payload = new Payload(payload, { login: String });
+    var _this   = this;
+    if (transport.isAuthorized()) {
+      if (payload.valid()) {
+        logger.info("Accepting user: "+ payload.get("login"))
+        transport.user.accept(payload.get('login'), function(accepted_user){
+          _this.sendActionTo("roster.accepted", { from: transport.user.login }, accepted_user);
+        });
+      } else {
+        payload.sendValidationError(transport, "roster.accept");
+      }
+    } else {
+      transport.sendError(ERROR.UNAUTHORIZED_ERROR, "You must be logged in to accpet user");
+    }
   }
 
 }

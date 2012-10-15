@@ -53,6 +53,30 @@ DatabaseHelper.prototype.buildUserModel = function(Invitation) {
     timestamps: true,
 
     instanceMethods: {
+      accept: function(login, cb) {
+        var _this = this;
+
+        User.find({ where: { login: login } }).success(function(user_to_accept) {
+          if (user_to_accept) {
+            Invitation.find({ where: { UserId: _this.id, FriendId: user_to_accept.id } }).success(function( invitation ){
+
+              if (invitation) {
+                invitation.destroy().success(function() {
+                  _this.addContact(user_to_accept);
+                  user_to_accept.addContact(_this);
+                  cb(user_to_accept);
+                });
+              } else {
+                cb(false);
+              }
+
+            });
+          } else {
+            cb(false);
+          }
+        });
+      },
+
       invite: function(login, message, cb) {
         var _this = this;
         User.find({ where: {login: login} }).success(function(user_to_invite){
