@@ -10,7 +10,7 @@ exports.commands = {
     var _this   = this;
     if (transport.isAuthorized()) {
       if (payload.valid()) {
-        transport.sendAction("roster.list", { user: transport.user.toCard(), contacts: {} });  
+        transport.sendAction("roster.all", { user: transport.user.toCard(), contacts: {} });  
         
       } else {
         payload.sendValidationError(transport, "roster.all");
