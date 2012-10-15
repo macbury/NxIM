@@ -10,13 +10,32 @@ exports.commands = {
     var _this   = this;
     if (transport.isAuthorized()) {
       if (payload.valid()) {
-        transport.sendAction("roster.all", { user: transport.user.toCard(), contacts: {} });  
+        transport.sendAction("roster.list", { user: transport.user.toCard(), contacts: [], invitations: [] });  
         
       } else {
-        payload.sendValidationError(transport, "roster.all");
+        payload.sendValidationError(transport, "roster.list");
       }
     } else {
       transport.sendError(ERROR.UNAUTHORIZED_ERROR, "You must be logged in fetch user roster");
+    }
+  }, 
+
+  "roster.add": function(transport, payload) {
+    var payload = new Payload(payload, { login: String, message: String });
+    var _this   = this;
+    if (transport.isAuthorized()) {
+      if (payload.valid()) {
+        logger.info("Inviting user: "+ payload.get("login"))
+        transport.user.invite(payload.get('login'), payload.get('message'), function(invited_user, invitation){
+          if (invited_user) {
+            _this.sendActionTo("roster.invitation", { message: invitation.message, from: transport.user.login }, invited_user);
+          }
+        });
+      } else {
+        payload.sendValidationError(transport, "roster.add");
+      }
+    } else {
+      transport.sendError(ERROR.UNAUTHORIZED_ERROR, "You must be logged in to add user");
     }
   }
 

@@ -43,6 +43,19 @@ ConnectionManager.prototype = {
     logger.info("Sending presence update to user friends: "+user.id);
   },
 
+  sendActionTo: function(action_name, payload, reciver_user) {
+    var connections = this.users[reciver_user.id];
+    if (connections == null) {
+      logger.info(reciver_user.login + " have no connections to send or is offline: ", connections);
+      return;
+    }
+
+    for (var i = 0; i < connections.length; i++) {
+      var transport = connections[i];
+      transport.sendAction(action_name, payload);
+    }
+  },
+
   bindUserToConnection: function(transport, user) {
     this.removePendingConnection(transport);
     var connections = this.users[user.id];

@@ -1,9 +1,19 @@
 var Client = function(host) {
   this.connected = false;
   this.token = null;
+  this.on("action.roster.list", this.setupRoster, this);
+  this.on("action.roster.invitation", function(payload){
+    console.log("Invitation reguest!");
+    console.log(payload);
+  });
 }
 
 _.extend(Client.prototype, Backbone.Events, {
+
+  setupRoster: function(payload) {
+    console.log("roster list");
+    console.log(payload);
+  },
 
   connect: function(host) {
     this.connected = true;

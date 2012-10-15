@@ -24,26 +24,27 @@ function DatabaseHelper(config) {
   });
 
   logger.info("Appending schema");
-  this.User = this.buildUserModel();
-  this.User.sync();
+  this.Invitation = this.buildInvitation();
+  this.User = this.buildUserModel(this.Invitation);
+  
+  this.Invitation.belongsTo(this.User, { as: 'User', foreignKey: "UserId" });
+  this.Invitation.belongsTo(this.User, { as: 'Friend', foreignKey: "FriendId" });
+  this.User.hasMany(this.Invitation, { foreignKey: "FriendId" })
 
-  this.Invitation = this.buildInvitation(this.User);
+  this.User.sync();
   this.Invitation.sync();
   logger.info("Appended data!");
 }
 
-DatabaseHelper.prototype.buildInvitation = function(User) {
+DatabaseHelper.prototype.buildInvitation = function() {
   var Invitation = this.db.define('Invitation', {
     message: { type: Sequelize.STRING, allowNull: false },
   }, { timestamps: true });
-  Invitation.belongsTo(User, { as: 'User', foreignKey: "UserId" });
-  Invitation.belongsTo(User, { as: 'Friend', foreignKey: "FriendId" });
 
-  User.hasMany(Invitation, { foreignKey: "FriendId" })
   return Invitation;
 }
 
-DatabaseHelper.prototype.buildUserModel = function() {
+DatabaseHelper.prototype.buildUserModel = function(Invitation) {
   var User = this.db.define('User', {
     login: { type: Sequelize.STRING, allowNull: false, unique: true  },
     hash:  { type: Sequelize.STRING, allowNull: false },
@@ -52,6 +53,39 @@ DatabaseHelper.prototype.buildUserModel = function() {
     timestamps: true,
 
     instanceMethods: {
+      invite: function(login, message, cb) {
+        var _this = this;
+        User.find({ where: {login: login} }).success(function(user_to_invite){
+
+          if (user_to_invite == null || _this.id == user_to_invite.id) {
+            cb(false);
+            return;
+          };
+
+          _this.hasContact(user_to_invite).success(function(result) {
+            if (result) {
+              cb(false, false);
+            } else {
+              Invitation.find({ where: { UserId: _this.id, FriendId: user_to_invite.id } }).success(function( invitation ){
+                if (invitation == undefined) {
+                  invitation = Invitation.build({ 
+                    message: message,
+                    UserId: _this.id,
+                    FriendId: user_to_invite.id
+                  });
+                } else {
+                  invitation.message = message;
+                }
+
+                invitation.save().success(function() {
+                  cb(user_to_invite, invitation); 
+                });
+              });
+            }
+          });
+        });
+      },
+
       setPresence: function(new_presence) {
         if (new_presence == Presence.Online || new_presence == Presence.Offline || new_presence == Presence.Away || new_presence == Presence.DnD) {
           this.presence = new_presence;
