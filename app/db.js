@@ -26,7 +26,21 @@ function DatabaseHelper(config) {
   logger.info("Appending schema");
   this.User = this.buildUserModel();
   this.User.sync();
+
+  this.Invitation = this.buildInvitation(this.User);
+  this.Invitation.sync();
   logger.info("Appended data!");
+}
+
+DatabaseHelper.prototype.buildInvitation = function(User) {
+  var Invitation = this.db.define('Invitation', {
+    message: { type: Sequelize.STRING, allowNull: false },
+  }, { timestamps: true });
+  Invitation.belongsTo(User, { as: 'User', foreignKey: "UserId" });
+  Invitation.belongsTo(User, { as: 'Friend', foreignKey: "FriendId" });
+
+  User.hasMany(Invitation, { foreignKey: "FriendId" })
+  return Invitation;
 }
 
 DatabaseHelper.prototype.buildUserModel = function() {
@@ -118,7 +132,8 @@ DatabaseHelper.prototype.buildUserModel = function() {
       },
     }
   });
-
+  
+  User.hasMany(User, { as: "Contacts" });
   return User;
 }
 

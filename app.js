@@ -9,6 +9,7 @@ var express  = require('express')
   , http     = require('http')
   , path     = require('path')
   , socket   = require("./app/socketio_boot")
+  , repl     = require("repl")
   , ConnectionManager = require("./app/connection_manager").klass;
 var logger   = require('nlogger').logger(module);
 var CONFIG   = require('config').development;
@@ -46,4 +47,10 @@ httpServer = http.createServer(app).listen(app.get('port'), function(){
 connectionManager = new ConnectionManager(CONFIG);
 io                = socket.boot(httpServer)
 connectionManager.bindSocketIO(io);
+
+process.argv.forEach(function (val, index, array) {
+  if (val == "console") {
+    repl.start("nxim> ", null);
+  }
+});
 
