@@ -122,6 +122,12 @@ DatabaseHelper.prototype.buildUserModel = function() {
         if (payload.get('token') != token) {
           errors.push("Token is invalid!");
         }
+        
+        var regexp       = /([^a-z0-9])/i;
+        var regexp_match = login.match(regexp);
+        if (regexp_match != null) {
+          errors.push("Invalid format, you cannot use non letter and number characters");
+        }
 
         User.count({ where: ["login = ?", login] }).success(function(count){
           if (count == 1) {
