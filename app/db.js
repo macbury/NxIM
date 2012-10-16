@@ -29,7 +29,7 @@ function DatabaseHelper(config) {
   
   this.Invitation.belongsTo(this.User, { as: 'User', foreignKey: "UserId" });
   this.Invitation.belongsTo(this.User, { as: 'Friend', foreignKey: "FriendId" });
-  this.User.hasMany(this.Invitation, { foreignKey: "FriendId" })
+  this.User.hasMany(this.Invitation, { foreignKey: "UserId" })
 
   this.User.sync();
   this.Invitation.sync();
@@ -45,6 +45,7 @@ DatabaseHelper.prototype.buildInvitation = function() {
 }
 
 DatabaseHelper.prototype.buildUserModel = function(Invitation) {
+  var db = this.db;
   var User = this.db.define('User', {
     login: { type: Sequelize.STRING, allowNull: false, unique: true  },
     hash:  { type: Sequelize.STRING, allowNull: false },
@@ -53,6 +54,12 @@ DatabaseHelper.prototype.buildUserModel = function(Invitation) {
     timestamps: true,
 
     instanceMethods: {
+
+      getPendingInvitations: function(cb) {
+        var sql = "SELECT Users.login, Users.presence, Invitations.message FROM `Users` INNER JOIN `Invitations` on `Invitations`.`FriendId` = `Users`.`id`  WHERE `Invitations`.`UserId`="+this.id+";";
+        db.query(sql, null, {raw: true}).on('success', cb);
+      },
+
       accept: function(login, cb) {
         var _this = this;
 
@@ -94,8 +101,8 @@ DatabaseHelper.prototype.buildUserModel = function(Invitation) {
                 if (invitation == undefined) {
                   invitation = Invitation.build({ 
                     message: message,
-                    UserId: _this.id,
-                    FriendId: user_to_invite.id
+                    UserId: user_to_invite.id,
+                    FriendId: _this.id
                   });
                 } else {
                   invitation.message = message;

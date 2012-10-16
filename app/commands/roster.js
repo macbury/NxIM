@@ -10,8 +10,10 @@ exports.commands = {
     var _this   = this;
     if (transport.isAuthorized()) {
       if (payload.valid()) {
-        transport.sendAction("roster.list", { user: transport.user.toCard(), contacts: [], invitations: [] });  
-        
+        transport.user.getPendingInvitations(function(invitations){
+          transport.sendAction("roster.list", { user: transport.user.toCard(), contacts: [], invitations: invitations }); 
+        });
+         
       } else {
         payload.sendValidationError(transport, "roster.list");
       }
