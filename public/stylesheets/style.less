@@ -44,18 +44,21 @@ body {
 
 .contacts-list {
   position: absolute;
-  top: 50px;
-  bottom: 10px;
+  top: 40px;
+  bottom: 0px;
   width: @leftViewWidth;
-  left: 10px;
+  left: 0px;
+  z-index: 0;
   overflow:hidden;
-  cursor: pointer;
+  padding-top: 5px;
+  overflow-y: scroll;
+  
   ul {
     list-style: none;
     padding: 0px;
     margin: 0px;
     li {
-      
+      cursor: pointer;
       font-size: 10px;
       .avatar {
         width: 28px;

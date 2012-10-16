@@ -3,7 +3,7 @@ var StreamView = Backbone.View.extend({
   className: "stream",
 
   initialize: function() {
-
+    //App.client.invitations.on("reset", this.contactListRender, this);
   },
 
   render: function() {

@@ -38,12 +38,14 @@ body {
 }
 .contacts-list {
   position: absolute;
-  top: 50px;
-  bottom: 10px;
+  top: 40px;
+  bottom: 0px;
   width: 220px;
-  left: 10px;
+  left: 0px;
+  z-index: 0;
   overflow: hidden;
-  cursor: pointer;
+  padding-top: 5px;
+  overflow-y: scroll;
 }
 .contacts-list ul {
   list-style: none;
@@ -51,6 +53,7 @@ body {
   margin: 0px;
 }
 .contacts-list ul li {
+  cursor: pointer;
   font-size: 10px;
 }
 .contacts-list ul li .avatar {
