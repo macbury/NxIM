@@ -4,17 +4,15 @@ var StreamView = Backbone.View.extend({
 
   initialize: function() {
     //App.client.invitations.on("reset", this.contactListRender, this);
+    this.contactsView = new ContactsView();
   },
 
   render: function() {
     html = new EJS({text: Templates['streamViewTemplate']}).render({});
     $(this.el).html(html);
 
-    var contact = $('.contact').clone();
-    for (var i = 0; i < 100; i++) {
-      $('.contacts-list ul').append(contact.clone());
-    }
-    $(".nano").nanoScroller();
+    $(this.el).append(this.contactsView.render().el);
+    
     return this;
   },
 

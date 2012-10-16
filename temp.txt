@@ -1,2 +1,11 @@
 https://github.com/hakimel/Avgrund
 http://lab.hakim.se/meny/
+
+<div class="contacts-list">
+  <ul>
+    <li class="contact">
+      <div class="avatar"></div>
+      <div class="user">Arkadiusz Buras</div>
+    </li>
+  </ul>
+</div>
