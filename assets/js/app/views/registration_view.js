@@ -7,9 +7,9 @@ var RegistrationView = Backbone.View.extend({
   },
 
   initialize: function() {
-    Router.client.on("action.account.token", this.setupToken, this);
-    Router.client.on("action.account.ready", this.accountReady, this);
-    Router.client.on("action.account.validation", this.onValidation, this);
+    App.client.on("action.account.token", this.setupToken, this);
+    App.client.on("action.account.ready", this.accountReady, this);
+    App.client.on("action.account.validation", this.onValidation, this);
     this.show();
   },
 
@@ -19,7 +19,7 @@ var RegistrationView = Backbone.View.extend({
     var password              = this.$("input.password").val();
     var token                 = this.$("input.token").val();
     var password_confirmation = this.$("input.password_confirmation").val();
-    Router.client.register(login, password, password_confirmation, token);
+    App.client.register(login, password, password_confirmation, token);
     $(this.el).find("form").hide();
 
     return false;
@@ -34,7 +34,7 @@ var RegistrationView = Backbone.View.extend({
 
   show: function() {
     this.render();
-    Router.client.sendAction("account.init", {});
+    App.client.sendAction("account.init", {});
     return this;
   },
 
@@ -59,14 +59,14 @@ var RegistrationView = Backbone.View.extend({
   },
 
   accountReady: function(payload) {
-    Router.navigate("/login", { trigger: true });
+    App.navigate("/login", { trigger: true });
     noty({text: 'Account created, you can now log in', type: "success"});
   },
 
   unload: function() {
-    Router.client.off("action.account.token", this.setupToken, this);
-    Router.client.off("action.account.validation", this.onValidation, this);
-    Router.client.off("action.account.ready", this.accountReady, this);
+    App.client.off("action.account.token", this.setupToken, this);
+    App.client.off("action.account.validation", this.onValidation, this);
+    App.client.off("action.account.ready", this.accountReady, this);
     this.remove();
   }
 

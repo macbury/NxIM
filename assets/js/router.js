@@ -43,7 +43,7 @@ var Workspace = Backbone.Router.extend({
 
 $(document).ready(function(){
   var Router = new Workspace();
-  window.Router = Router;
+  window.App = Router;
   Backbone.history.start({
     pushState: false
   });

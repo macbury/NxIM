@@ -11,11 +11,11 @@ exports.commands = {
     if (transport.isAuthorized()) {
       if (payload.valid()) {
         transport.user.getPendingInvitations(function(invitations){
-          transport.sendAction("roster.list", { user: transport.user.toCard(), contacts: [], invitations: invitations }); 
+          transport.sendAction("roster.index", { user: transport.user.toCard(), contacts: [], invitations: invitations }); 
         });
          
       } else {
-        payload.sendValidationError(transport, "roster.list");
+        payload.sendValidationError(transport, "roster.index");
       }
     } else {
       transport.sendError(ERROR.UNAUTHORIZED_ERROR, "You must be logged in fetch user roster");

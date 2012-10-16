@@ -7,7 +7,8 @@ body {
   overflow: hidden;
 }
 .presence-view {
-  top: 15px;
+  display: none;
+  top: 75px;
   left: 15px;
   position: absolute;
   padding: 10px;
@@ -36,14 +37,11 @@ body {
   line-height: 13px;
 }
 .contacts-list {
-  border: 1px solid #DDD;
-  box-shadow: 0 1px 4px #EEE;
   position: absolute;
-  top: 80px;
-  bottom: 15px;
+  top: 50px;
+  bottom: 10px;
   width: 220px;
-  left: 15px;
-  background-color: white;
+  left: 10px;
   overflow: hidden;
   cursor: pointer;
 }
@@ -53,7 +51,6 @@ body {
   margin: 0px;
 }
 .contacts-list ul li {
-  border-bottom: 1px solid #ddd;
   font-size: 10px;
 }
 .contacts-list ul li .avatar {
@@ -61,7 +58,6 @@ body {
   height: 28px;
   background: #ffffff url('/images/avatar.png') no-repeat center;
   position: absolute;
-  border-right: 1px solid #ddd;
 }
 .contacts-list ul li .user {
   line-height: 28px;

@@ -9,7 +9,8 @@ body {
 @leftViewWidth: 220px;
 
 .presence-view {
-  top: 15px;
+  display: none;
+  top: 75px;
   left: 15px;
   position: absolute;
   padding: 10px;
@@ -42,14 +43,11 @@ body {
 }
 
 .contacts-list {
-  border: 1px solid #DDD;
-  box-shadow: 0 1px 4px #EEE;
   position: absolute;
-  top: 80px;
-  bottom: 15px;
+  top: 50px;
+  bottom: 10px;
   width: @leftViewWidth;
-  left: 15px;
-  background-color: white;
+  left: 10px;
   overflow:hidden;
   cursor: pointer;
   ul {
@@ -57,7 +55,6 @@ body {
     padding: 0px;
     margin: 0px;
     li {
-      border-bottom: 1px solid #ddd;
       
       font-size: 10px;
       .avatar {
@@ -65,7 +62,6 @@ body {
         height: 28px;
         background: #fff url('/images/avatar.png') no-repeat center;
         position: absolute;
-        border-right: 1px solid #ddd;
       }
 
       .user {
