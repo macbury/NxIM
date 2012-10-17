@@ -49,6 +49,7 @@ exports.commands = {
         logger.info("Accepting user: "+ payload.get("login"))
         transport.user.accept(payload.get('login'), function(accepted_user){
           _this.sendActionTo("roster.accepted", { from: transport.user.login }, accepted_user);
+          _this.sendActionTo("roster.accepted", { from: accepted_user.login }, transport.user);
         });
       } else {
         payload.sendValidationError(transport, "roster.accept");

@@ -4,7 +4,11 @@ var Client = function(host) {
   this.invitations = new InvitationsCollection();
   this.on("action.roster.index", this.setupRoster, this);
   this.on("action.roster.invitation", function(payload){
-    console.log("Invitation reguest!");
+    this.getRoster();
+  }, this);
+
+  this.on("action.roster.accepted", function(payload){
+    console.log("Accepted invitations!");
     this.getRoster();
   }, this);
 }
@@ -44,6 +48,10 @@ _.extend(Client.prototype, Backbone.Events, {
 
   sendInvitation: function(login, message) {
     this.sendAction("roster.add", { login: login, message: message });
+  },
+
+  acceptInvitation: function(login) {
+    this.sendAction("roster.accept", { login: login });
   },
 
   sendAction: function(action_name, payload) {
