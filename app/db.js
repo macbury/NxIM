@@ -24,16 +24,45 @@ function DatabaseHelper(config) {
   });
 
   logger.info("Appending schema");
-  this.Invitation = this.buildInvitation();
-  this.User = this.buildUserModel(this.Invitation);
-  
+  this.Invitation     = this.buildInvitation();
+  this.User           = this.buildUserModel(this.Invitation);
+  this.Stream         = this.buildStream();
+  this.MessageObject  = this.buildMessageObject();
+
   this.Invitation.belongsTo(this.User, { as: 'User', foreignKey: "UserId" });
   this.Invitation.belongsTo(this.User, { as: 'Friend', foreignKey: "FriendId" });
-  this.User.hasMany(this.Invitation, { foreignKey: "UserId" })
+  this.User.hasMany(this.Invitation, { foreignKey: "UserId" });
+
+  this.User.hasMany(this.Stream, { as: "OwnedStreams" });
+  this.Stream.belongsTo(this.User, { as: "Owner" });
+  this.Stream.hasMany(this.User);
+  this.Stream.hasMany(this.MessageObject);
+
+  this.MessageObject.belongsTo(this.User, { as: "Author" });
+  this.MessageObject.belongsTo(this.Stream);
 
   this.User.sync();
   this.Invitation.sync();
+  this.Stream.sync();
+  this.MessageObject.sync();
   logger.info("Appended data!");
+}
+
+DatabaseHelper.prototype.buildMessageObject = function() {
+  var MessageObject = this.db.define("MessageObject", {
+    content: { type: Sequelize.TEXT },
+    url: { type: Sequelize.STRING }
+  }, { timestamps: true })
+
+  return MessageObject;
+}
+
+DatabaseHelper.prototype.buildStream = function() {
+  var Stream = this.db.define("Stream", {
+    name: { type: Sequelize.STRING, allowNull: false }
+  }, { timestamps: true });
+
+  return Stream;
 }
 
 DatabaseHelper.prototype.buildInvitation = function() {
