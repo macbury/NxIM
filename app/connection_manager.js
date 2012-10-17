@@ -16,6 +16,7 @@ function ConnectionManager(config) {
     require("./commands/presence").commands,
     require("./commands/profile").commands,
     require("./commands/roster").commands,
+    require("./commands/thread").commands,
   ];
 
   for (var i = 0; i < commandsTemp.length; i++) {;
