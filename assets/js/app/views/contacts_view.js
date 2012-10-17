@@ -7,7 +7,8 @@ var ContactsView = Backbone.View.extend({
   },
 
   render: function() {
-    $(this.el).empty().append("<ul></ul>");
+    var html = new EJS({text: Templates['contactList']}).render({});
+    $(this.el).html(html);
     this.ul = this.$('ul');
     this.addAllInvitations();
     return this;
