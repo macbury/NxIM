@@ -40,7 +40,13 @@ ConnectionManager.prototype = {
   pending_connections: [], // connections waiting to be assign to user(unauthorized)
 
   broadcastPresence: function(user) {
-    logger.info("Sending presence update to user friends: "+user.id);
+    var _this = this;
+    user.getContacts().success(function(contacts){
+      logger.info("Sending presence update to user friends: "+user.login + " contacts count: "+contacts.length);
+      for (var i = 0; i < contacts.length; i++) {
+        _this.sendActionTo("presence.change", { presence: user.presence, from: user.login }, contacts[i]);
+      };
+    });
   },
 
   sendActionTo: function(action_name, payload, reciver_user) {
