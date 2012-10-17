@@ -55,6 +55,7 @@ body {
 .contacts-list ul li {
   cursor: pointer;
   font-size: 10px;
+  padding: 5px 10px;
 }
 .contacts-list ul li .avatar {
   width: 28px;
