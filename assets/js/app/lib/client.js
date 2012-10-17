@@ -42,6 +42,10 @@ _.extend(Client.prototype, Backbone.Events, {
     Router.navigate("/disconnect", { trigger: true });
   },
 
+  sendInvitation: function(login, message) {
+    this.sendAction("roster.add", { login: login, message: message });
+  },
+
   sendAction: function(action_name, payload) {
     if (this.connected) {
       this.socket.emit('message', { action: action_name, payload: payload })
