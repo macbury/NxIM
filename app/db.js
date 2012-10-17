@@ -69,9 +69,11 @@ DatabaseHelper.prototype.buildUserModel = function(Invitation) {
 
               if (invitation) {
                 invitation.destroy().success(function() {
-                  _this.addContact(user_to_accept);
-                  user_to_accept.addContact(_this);
-                  cb(user_to_accept);
+                  _this.addContact(user_to_accept).success(function() {
+                    user_to_accept.addContact(_this).success(function(){
+                      cb(user_to_accept);  
+                    });  
+                  });                  
                 });
               } else {
                 cb(false);
@@ -113,7 +115,7 @@ DatabaseHelper.prototype.buildUserModel = function(Invitation) {
                 });
               });
             }
-          });
+          }).error;
         });
       },
 

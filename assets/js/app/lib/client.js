@@ -55,7 +55,7 @@ _.extend(Client.prototype, Backbone.Events, {
 
   onDisconnect: function() {
     connected = false;
-    Router.navigate("/disconnect", { trigger: true });
+    App.navigate("/disconnect", { trigger: true });
   },
 
   sendInvitation: function(login, message) {
@@ -70,6 +70,8 @@ _.extend(Client.prototype, Backbone.Events, {
     if (this.connected) {
       this.socket.emit('message', { action: action_name, payload: payload })
     }
+
+    console.log("Sended: "+action_name);
   },
 
   login: function(login, password) {
@@ -104,7 +106,7 @@ _.extend(Client.prototype, Backbone.Events, {
     } else {
       var action_name = response.action;
       var payload     = response.payload;
-    
+      console.log("Recived: "+action_name);
       this.trigger('action.'+action_name, payload);
     }
   }
