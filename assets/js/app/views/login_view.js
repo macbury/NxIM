@@ -33,7 +33,7 @@ var LoginView = Backbone.View.extend({
   onSessionValid: function(payload) {
     App.navigate("/stream", { trigger: true });
     App.client.presence("online");
-    App.client.sendAction("roster.all", {});
+    App.client.getRoster();
     noty({text: "Logged in successful", type: "info"});
   },
 

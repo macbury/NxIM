@@ -97,7 +97,7 @@ DatabaseHelper.prototype.buildUserModel = function(Invitation) {
             if (result) {
               cb(false, false);
             } else {
-              Invitation.find({ where: { UserId: _this.id, FriendId: user_to_invite.id } }).success(function( invitation ){
+              Invitation.find({ where: { UserId: user_to_invite.id, FriendId: _this.id } }).success(function( invitation ){
                 if (invitation == undefined) {
                   invitation = Invitation.build({ 
                     message: message,

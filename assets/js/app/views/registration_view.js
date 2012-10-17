@@ -26,7 +26,7 @@ var RegistrationView = Backbone.View.extend({
   },
 
   render: function() {
-    html = new EJS({text: Templates['registrationViewTemplate']}).render({});
+    var html = new EJS({text: Templates['registrationViewTemplate']}).render({});
     $(this.el).html(html);
     this.$('.alert').hide();
     return this;

@@ -5,12 +5,15 @@ var Client = function(host) {
   this.on("action.roster.index", this.setupRoster, this);
   this.on("action.roster.invitation", function(payload){
     console.log("Invitation reguest!");
-    console.log(payload);
-  });
+    this.getRoster();
+  }, this);
 }
 
 _.extend(Client.prototype, Backbone.Events, {
 
+  getRoster: function() {
+    this.sendAction("roster.all", {})
+  },
   setupRoster: function(payload) {
     this.invitations.reset(payload.invitations);
   },

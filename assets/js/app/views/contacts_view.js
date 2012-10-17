@@ -14,8 +14,10 @@ var ContactsView = Backbone.View.extend({
   },
 
   addAllInvitations: function() {
+    var _this = this;
     App.client.invitations.each(function(invitation) {
-      console.log(invitation);
+      var view = new InvitationRowView({model: invitation});
+      _this.ul.append(view.render().el);
     });
   }
 });
