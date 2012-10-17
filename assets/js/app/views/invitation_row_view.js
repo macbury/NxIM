@@ -24,7 +24,6 @@ var InvitationRowView = Backbone.View.extend({
   render: function() {
     var html = new EJS({text: Templates['invitationRow']}).render(this.model.toJSON());
     this.$el.html(html);
-    this.input = this.$('.edit');
     return this;
   },
 

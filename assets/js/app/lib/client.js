@@ -2,6 +2,7 @@ var Client = function(host) {
   this.connected = false;
   this.token = null;
   this.invitations = new InvitationsCollection();
+  this.contacts    = new ContactsCollection();
   this.on("action.roster.index", this.setupRoster, this);
   this.on("action.roster.invitation", function(payload){
     this.getRoster();
@@ -11,15 +12,26 @@ var Client = function(host) {
     console.log("Accepted invitations!");
     this.getRoster();
   }, this);
+
+  this.on("action.presence.change", this.presenceChange, this);
 }
 
 _.extend(Client.prototype, Backbone.Events, {
+
+  presenceChange: function(payload) {
+    this.contacts.each(function(contact) {
+      if (contact.get('login') == payload.from) {
+        contact.set('presence', payload.presence);
+      }
+    });
+  },
 
   getRoster: function() {
     this.sendAction("roster.all", {})
   },
   setupRoster: function(payload) {
     this.invitations.reset(payload.invitations);
+    this.contacts.reset(payload.contacts);
   },
 
   connect: function(host) {

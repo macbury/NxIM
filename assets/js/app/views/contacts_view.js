@@ -8,6 +8,7 @@ var ContactsView = Backbone.View.extend({
 
   initialize: function() {
     App.client.invitations.on("reset", this.render, this);
+    App.client.contacts.on("reset", this.render, this);
   },
 
   render: function() {
@@ -15,6 +16,7 @@ var ContactsView = Backbone.View.extend({
     $(this.el).html(html);
     this.ul = this.$('ul');
     this.addAllInvitations();
+    this.addAllContacts();
     return this;
   },
 
@@ -31,5 +33,13 @@ var ContactsView = Backbone.View.extend({
     var nick = prompt("Enter login");
     var message = prompt("Enter messge");
     App.client.sendInvitation(nick, message);
+  },
+
+  addAllContacts: function() {
+    var _this = this;
+    App.client.contacts.each(function(contact) {
+      var view = new ContactRowView({model: contact});
+      _this.ul.append(view.render().el);
+    });
   },
 });

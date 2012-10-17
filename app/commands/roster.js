@@ -11,7 +11,14 @@ exports.commands = {
     if (transport.isAuthorized()) {
       if (payload.valid()) {
         transport.user.getPendingInvitations(function(invitations){
-          transport.sendAction("roster.index", { user: transport.user.toCard(), contacts: [], invitations: invitations }); 
+          transport.user.getContacts().success(function(contacts) {
+            var vCardArray = [];
+            for (var i = 0; i < contacts.length; i++) {
+              vCardArray.push(contacts[i].toCard());
+            }
+            transport.sendAction("roster.index", { user: transport.user.toCard(), contacts: vCardArray, invitations: invitations }); 
+          });
+          
         });
          
       } else {
