@@ -1,6 +1,6 @@
 var socketIO        = require('socket.io');
 var logger          = require('nlogger').logger(module);
-function boot(httpServer) {
+function bootWebsocket(httpServer) {
   logger.info("Starting socket.io server now");
   io = socketIO.listen(httpServer);
   io.configure('development', function(){
@@ -11,4 +11,4 @@ function boot(httpServer) {
   return io;
 }
 
-exports.boot = boot;
+exports.bootWebsocket = bootWebsocket;

@@ -4,7 +4,7 @@ var errors          = require("./error_code");
 var crypto          = require('crypto');
 var DatabseHelper   = require("./db").DatabaseHelper;
 var UserPresence    = require("./db").UserPresence;
-
+var Net             = require("net");
 function ConnectionManager(config) {
   logger.info("Creating connection manager");
   this.commands = {}
@@ -80,11 +80,20 @@ ConnectionManager.prototype = {
   bindSocketIO: function(io) {
     logger.info("Binding socket io");
     this.socketIO = io;
-    context = this;
+    var context = this;
     this.socketIO.sockets.on('connection', function (socket) {
-      connection = new SocketTransport(context, socket);
+      var connection = new SocketTransport(context, socket);
       context.onConnection(connection);
     });
+  },
+  
+  bindSocketTCP: function() {
+    logger.info("Binding tcp socket");
+    this.socketTCP = net.createServer(function (socket) {
+      var connection = new SocketTransport(context, socket);
+    });
+    
+    this.socketTCP.listen(7000, "0.0.0.0");
   },
 
   onConnection: function(socketTransportConnection) {
