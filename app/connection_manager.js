@@ -130,8 +130,6 @@ ConnectionManager.prototype = {
       transport.sendError(errors.INVALID_MESSAGE, "Invalid message!");  
       logger.error("message is invalid!");    
     }
-
-    transport.sendJSON(data);
   }, 
 
   onDisconnect: function(transportConnection) {
