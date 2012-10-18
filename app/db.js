@@ -25,9 +25,10 @@ function DatabaseHelper(config) {
 
   logger.info("Appending schema");
   this.Invitation     = this.buildInvitation();
-  this.User           = this.buildUserModel(this.Invitation);
   this.Stream         = this.buildStream();
   this.MessageObject  = this.buildMessageObject();
+  this.User           = this.buildUserModel(this.Invitation, this.Stream, this.MessageObject);
+
 
   this.Invitation.belongsTo(this.User, { as: 'User', foreignKey: "UserId" });
   this.Invitation.belongsTo(this.User, { as: 'Friend', foreignKey: "FriendId" });
@@ -52,7 +53,12 @@ DatabaseHelper.prototype.buildMessageObject = function() {
   var MessageObject = this.db.define("MessageObject", {
     content: { type: Sequelize.TEXT },
     url: { type: Sequelize.STRING }
-  }, { timestamps: true })
+  }, { 
+    timestamps: true
+    instanceMethods: {
+
+    }
+  });
 
   return MessageObject;
 }
@@ -60,7 +66,12 @@ DatabaseHelper.prototype.buildMessageObject = function() {
 DatabaseHelper.prototype.buildStream = function() {
   var Stream = this.db.define("Stream", {
     name: { type: Sequelize.STRING, allowNull: false }
-  }, { timestamps: true });
+  }, { 
+    timestamps: true,
+    instanceMethods: function() {
+
+    }
+  });
 
   return Stream;
 }
@@ -73,7 +84,7 @@ DatabaseHelper.prototype.buildInvitation = function() {
   return Invitation;
 }
 
-DatabaseHelper.prototype.buildUserModel = function(Invitation) {
+DatabaseHelper.prototype.buildUserModel = function(Invitation, Stream, MessageObject) {
   var db = this.db;
   var User = this.db.define('User', {
     login: { type: Sequelize.STRING, allowNull: false, unique: true  },
@@ -83,6 +94,31 @@ DatabaseHelper.prototype.buildUserModel = function(Invitation) {
     timestamps: true,
 
     instanceMethods: {
+
+      createStream: function(users, title, body, cb) {
+        var _this = this;
+        User.findAll({where: ["Users.login IN (?) and Users.id != ?", users, _this.id]}).success(function(users){
+          if (users.length == 0) {
+            cb(false, false);
+          }
+
+          Stream.create({
+            name: title
+          }).success(function(stream) {
+            users.push(_this);
+            stream.setUsers(users);
+
+            MessageObject.create({
+              UserId: _this.id,
+              StreamId: stream.id,
+              content: body
+            }).success(function() {
+              cb(stream, users);  
+            });
+            
+          });
+        });
+      },
 
       getPendingInvitations: function(cb) {
         var sql = "SELECT Users.login, Users.presence, Invitations.message FROM `Users` INNER JOIN `Invitations` on `Invitations`.`FriendId` = `Users`.`id`  WHERE `Invitations`.`UserId`="+this.id+";";
