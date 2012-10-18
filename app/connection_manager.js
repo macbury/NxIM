@@ -1,4 +1,6 @@
 var SocketTransport = require("./socket_transport").klass;
+var TCPSocketTransport = require("./tcp_socket_transport").klass;
+
 var logger          = require('nlogger').logger(module);
 var errors          = require("./error_code");
 var crypto          = require('crypto');
@@ -82,15 +84,19 @@ ConnectionManager.prototype = {
     this.socketIO = io;
     var context = this;
     this.socketIO.sockets.on('connection', function (socket) {
-      var connection = new SocketTransport(context, socket);
+      var connection = new SocketTransport();
+      connection.setup(context, socket)
       context.onConnection(connection);
     });
   },
   
   bindSocketTCP: function() {
     logger.info("Binding tcp socket");
-    this.socketTCP = net.createServer(function (socket) {
-      var connection = new SocketTransport(context, socket);
+    var context = this;
+    this.socketTCP = Net.createServer(function (socket) {
+      var connection = new TCPSocketTransport();
+      connection.setup(context, socket);
+      context.onConnection(connection);
     });
     
     this.socketTCP.listen(7000, "0.0.0.0");

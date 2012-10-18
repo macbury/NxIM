@@ -12,9 +12,8 @@ logger.info("Detected "+numCPUs + " cpus on device.");
 httpServer = http.createServer(app).listen(app.get('port'), function(){
   logger.info("Express server listening on port " + app.get('port'));
   connectionManager = new ConnectionManager(CONFIG);
-  io                = socket.bootWebsocket(httpServer);
-
-  connectionManager.bindSocketIO(io);
+  connectionManager.bindSocketTCP();
+  connectionManager.bindSocketIO(socket.bootWebsocket(httpServer));
 });
 
 process.argv.forEach(function (val, index, array) {
